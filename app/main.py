@@ -5,3 +5,7 @@ app = FastAPI(title="Lab1 - FastAPI User API")
 @app.get("/health")
 def health(): 
     return {"status": "ok"}
+
+@app.get("/hello")
+def hello(): 
+    return {"message": "Hello World"}
