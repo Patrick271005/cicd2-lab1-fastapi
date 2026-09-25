@@ -1,7 +1,7 @@
 import pytest
 
 
-def user_payload(uid = 1, name="Paul", email="paul@atu.ie", age =25, student_id = "S1234567"):
+def user_payload(uid = 1, name="Paul", email="paul@atu.ie", age = 25, student_id = "S1234567"):
     return {"user_id" : uid, "name": name, "email": email, "age": age, "student_id" : student_id}
 
 def test_create_user_returns_201(client):
@@ -24,6 +24,30 @@ def test_duplictate_user_id_returns_409(client):
     client.post("/api/users", json=user_payload(uid=2))
 
     response = client.post("/api/users", json=user_payload(uid=2))
-    
+
     assert response.status_code == 409
     assert "exists" in response.json()["detail"].lower()
+
+
+def test_get_users_returns_created_users(client):
+    client.post("/api/users", json=user_payload(uid=10, name="Alice", email="alice@atu.ie"))
+    response = client.get("/api/users")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["user_id"] == 10
+    assert data[0]["name"] == "Alice"
+
+
+def test_get_existing_user_returns_200(client):
+    client.post("/api/users", json=user_payload(uid=11))
+    response = client.get("/api/users/11")
+    assert response.status_code == 200
+    assert response.json()["user_id"] == 11
+
+
+
+def test_get_missing_user_returns_404(client):
+    response = client.get("/api/users/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
