@@ -1,9 +1,11 @@
 import pytest
+
+
 def user_payload(uid = 1, name="Paul", email="paul@atu.ie", age =25, student_id = "S1234567"):
     return {"user_id" : uid, "name": name, "email": email, "age": age, "student_id" : student_id}
 
 def test_create_user_returns_201(client):
-    response = client.post("api/users", json=user_payload())
+    response = client.post("/api/users", json=user_payload())
 
     assert response.status_code == 201
     data = response.json()
@@ -16,3 +18,4 @@ def test_create_user_returns_201(client):
 def test_bad_student_id_return_422(client, bad_student):
     response = client.post("api/users", json=user_payload(uid=3, student_id=bad_student))
     assert response.status_code == 422
+    

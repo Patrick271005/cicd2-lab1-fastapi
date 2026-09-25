@@ -11,7 +11,7 @@ def health():
 def hello(): 
     return {"message": "Hello World"}
 
-@app.post("/app/users", status_code=status.HTTP_201_CREATED)
+@app.post("/api/users", status_code=status.HTTP_201_CREATED)
 def add_user(new_user: UserCreate):
     for existing_user in users:
         if existing_user.user_id == new_user.user_id:
@@ -19,6 +19,8 @@ def add_user(new_user: UserCreate):
                                 detail="A user with this id already exists")
     users.append(new_user)
     return new_user
+
+
 @app.get("/api/users")
 def get_users():
     return users
