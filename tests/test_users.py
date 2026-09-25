@@ -18,4 +18,12 @@ def test_create_user_returns_201(client):
 def test_bad_student_id_return_422(client, bad_student):
     response = client.post("api/users", json=user_payload(uid=3, student_id=bad_student))
     assert response.status_code == 422
+
+
+def test_duplictate_user_id_returns_409(client):
+    client.post("/api/users", json=user_payload(uid=2))
+
+    response = client.post("/api/users", json=user_payload(uid=2))
     
+    assert response.status_code == 409
+    assert "exists" in response.json()["detail"].lower()
