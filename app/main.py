@@ -57,14 +57,14 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/api/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: int):
-    # Use enumerate so we can find the user and remove it by index.
-    for index, existing_user in enumerate(users):
-        if existing_user.user_id == user_id:
-            users.pop(index)
-            return Response(status_code=status.HTTP_204_NO_CONTENT)
-        
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="User not found",
-    )
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = db.get(UserDB, user_id)
+
+    if db_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    db.delete(db_user)
+    db.commit()
+    return
